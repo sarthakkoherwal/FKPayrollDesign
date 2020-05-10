@@ -1,4 +1,4 @@
-//package FilesHere;
+package FilesHere;
 import java.util.Scanner;
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -75,9 +75,9 @@ class Employee{
 		st.executeUpdate(q2);
 		conn.close();
 	}
-	public void timeCard() throws Exception{
+	public void timeCard(int id,int hrs) throws Exception{
 		hourlySalary temp=new hourlySalary();
-		temp.insertTimeCard();
+		temp.insertTimeCard(id,hrs);
 	}
 	// public void receiptSales(){
 	// 	monthlyCommissionedSalary temp=new monthlyCommissionedSalary();
@@ -94,7 +94,7 @@ class Union{
 	public void insertUnionInfo(int Id) throws Exception{
 		Connection conn=Connect.obj();
 		Statement st=conn.createStatement();
-		String q="insert into employee values("+Id+")";
+		String q="insert into union values("+Id+")";
 		st.executeUpdate(q);
 		conn.close();
 	}
@@ -130,18 +130,21 @@ class hourlySalary{
 		//delete member from table hourly whose ID matches with id
 		Connection conn=Connect.obj();
 		Statement st=conn.createStatement();
-		String q="delete from Union where Id='"+id+"'";
+		String q="delete from Hourly where Id='"+id+"'";
 		st.executeUpdate(q);
 		conn.close();
 	}
-	public void insertTimeCard() throws Exception{
-//		Connection conn=Connect.obj();
+	public void insertTimeCard(int id,int hrs) throws Exception{
+		Connection conn=Connect.obj();
 		long millis=System.currentTimeMillis();  
-		java.sql.Date date=new java.sql.Date(millis);  
-		// System.out.println(date); 
-		// Statement st=conn.createStatement();
-		System.out.println("Enter working hrs");
-//		conn.close();
+		java.sql.Date date=new java.sql.Date(millis);
+    	String q1="select rate from hourly where id= '"+id+"'";
+        Statement st= conn.createStatement();
+     	ResultSet rs = st.executeQuery(q1);
+     	int rate = rs.getInt("rate");
+     	String q2="insert into hourly values ('"+id+","+hrs+","+date+","+rate+")";
+     	st.executeUpdate(q2);
+		conn.close();
 	}
 }
 class monthlySalaried{
@@ -237,21 +240,30 @@ public class Code{
 				E.insertRecord(Id,Name,Address,Umember,paymentRecieveMethod,paymentMethod,lastpaid,salary);
 			}
 		}
-		System.out.println("Press 1 if you want to delete an employee");
+		System.out.println("Press 2 if you want to delete an employee");
 		choice=in.nextInt();
-		if(choice==1){
-			while(choice==1){
-				int Id;
-				System.out.println("Enter the employee ID to be deleted");
-				Id=in.nextInt();
-				Employee temp=new Employee();
-				temp.delete(Id);
-				System.out.println("Press 1 to delete another record or 0 to exit");
-				choice=in.nextInt();
-			}
+		while(choice==1){
+			int Id;
+			System.out.println("Enter the employee ID to be deleted");
+			Id=in.nextInt();
+			Employee E=new Employee();
+			E.delete(Id);
+			System.out.println("Press 2 to delete another record or 0 to exit");
+			choice=in.nextInt();
 		}
-		Employee e=new Employee();
-		e.timeCard();
+		System.out.println("Press 3 to post timecard for an employee");
+		choice=in.nextInt();
+		while(choice==3){
+			int id,hrs;
+			System.out.println("Enter Employee Id");
+			id=in.nextInt();
+			System.out.println("Enter working hours");
+			hrs=in.nextInt();
+			Employee E=new Employee();
+			E.timeCard(id,hrs);
+			System.out.println("Press 3 to enter timecard for another employee or 0 to exit");
+			choice=in.nextInt();
+		}
 		//fetch today's date and it if is sunday then update sales receipt for every employee in table monthlyCommissionedSalary
 		// e.receiptSales();
 		//fetch today's fate and if it is sunday then update Union information for all employees who belong to the union
