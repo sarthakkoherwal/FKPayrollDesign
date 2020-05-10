@@ -1,4 +1,4 @@
-package FilesHere;
+//package FilesHere;
 import java.util.Scanner;
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -19,6 +19,9 @@ class Employee{
 	private static int count;
 	Employee(){
 		count++;
+	}
+	public int getId(){
+		return count;
 	}
 	public void insertRecord(int Id,String Name,String Address,int Umember,int paymentRecieveMethod,int paymentMethod,String lastpaid,int salary) throws Exception{
 		if(Umember==1){
@@ -43,21 +46,6 @@ class Employee{
 		st.executeUpdate(q);
 		conn.close();
 	}
-	public int getId(){
-		return count;
-	}
-	// public void timeCard(){
-	// 	hourlySalary temp=new hourlySalary();
-	// 	temp.insertTimeCard();
-	// }
-	// public void receiptSales(){
-	// 	monthlyCommissionedSalary temp=new monthlyCommissionedSalary();
-	// 	temp.insertReceiptSales();
-	// }
-	// public void unionFees(){
-	// 	Union temp=new Union();
-	// 	temp.updateUnionFees();
-	// }
 	public void delete(int id) throws Exception{
 		int Umember,paymentMethod;
 		Connection conn=Connect.obj();
@@ -87,6 +75,18 @@ class Employee{
 		st.executeUpdate(q2);
 		conn.close();
 	}
+	public void timeCard() throws Exception{
+		hourlySalary temp=new hourlySalary();
+		temp.insertTimeCard();
+	}
+	// public void receiptSales(){
+	// 	monthlyCommissionedSalary temp=new monthlyCommissionedSalary();
+	// 	temp.insertReceiptSales();
+	// }
+	// public void unionFees(){
+	// 	Union temp=new Union();
+	// 	temp.updateUnionFees();
+	// }
 }
 class Union{
 	private int serviceCharge,Id;
@@ -126,11 +126,6 @@ class hourlySalary{
 		st.executeUpdate(q);
 		conn.close();
 	}
-	// public void insertTimeCard(){
-	// 	//for loop which iterates over all values in table hourlySalary and for every person in the table inserts their working hours for the current day
-	// 	System.out.println("Enter Date");
-	// 	System.out.println("Enter working hrs");
-	// }
 	public void deleteMember(int id) throws Exception{
 		//delete member from table hourly whose ID matches with id
 		Connection conn=Connect.obj();
@@ -138,6 +133,15 @@ class hourlySalary{
 		String q="delete from Union where Id='"+id+"'";
 		st.executeUpdate(q);
 		conn.close();
+	}
+	public void insertTimeCard() throws Exception{
+//		Connection conn=Connect.obj();
+		long millis=System.currentTimeMillis();  
+		java.sql.Date date=new java.sql.Date(millis);  
+		// System.out.println(date); 
+		// Statement st=conn.createStatement();
+		System.out.println("Enter working hrs");
+//		conn.close();
 	}
 }
 class monthlySalaried{
@@ -246,8 +250,8 @@ public class Code{
 				choice=in.nextInt();
 			}
 		}
-		// Employee e=new Employee();
-		// e.timeCard();
+		Employee e=new Employee();
+		e.timeCard();
 		//fetch today's date and it if is sunday then update sales receipt for every employee in table monthlyCommissionedSalary
 		// e.receiptSales();
 		//fetch today's fate and if it is sunday then update Union information for all employees who belong to the union
