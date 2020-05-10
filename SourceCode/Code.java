@@ -1,8 +1,6 @@
 package FilesHere;
 import java.util.Scanner;
-import java.util.Date;
 import java.text.SimpleDateFormat;
-import java.util.Random;
 import java.util.Calendar;
 import java.sql.*;
 class Connect{
@@ -23,7 +21,7 @@ class Employee{
 	public int getId(){
 		return count;
 	}
-	public void insertRecord(int Id,String Name,String Address,int Umember,int paymentRecieveMethod,int paymentMethod,String lastpaid,int salary) throws Exception{
+	public void insertRecord(int Id,String Name,String Address,int Umember,int paymentRecieveMethod,int paymentMethod,int salary) throws Exception{
 		if(Umember==1){
 			Union u=new Union();
 			u.insertUnionInfo(Id);	
@@ -42,7 +40,7 @@ class Employee{
 		}
 		Connection conn=Connect.obj();
 		Statement st=conn.createStatement();
-		String q="insert into employee values("+Id+","+Name+","+Address+","+Umember+","+paymentRecieveMethod+","+paymentMethod+lastpaid+")";
+		String q="insert into employee values("+Id+","+Name+","+Address+","+Umember+","+paymentRecieveMethod+","+paymentMethod+")";
 		st.executeUpdate(q);
 		conn.close();
 	}
@@ -97,8 +95,6 @@ class Employee{
 	}
 }
 class Union{
-	private int serviceCharge,Id;
-	String date;
 	public void insertUnionInfo(int Id) throws Exception{
 		Connection conn=Connect.obj();
 		Statement st=conn.createStatement();
@@ -127,14 +123,13 @@ class Union{
 }
 class hourlySalary{
 	private static int rate;
-	private int Id,hrs,date;
 	static{
 		rate=10;
 	}
 	public void insertHourlyInfo(int Id) throws Exception{
 		Connection conn=Connect.obj();
 		Statement st=conn.createStatement();
-		String q="insert into Hourly(Id) values("+Id+")";
+		String q="insert into Hourly(Id,rate) values("+Id+","+rate+")";
 		st.executeUpdate(q);
 		conn.close();
 	}
@@ -167,7 +162,6 @@ class hourlySalary{
 	}
 }
 class monthlySalaried{
-	private int salary,Id;
 	public void insertMonthlyInfo(int Id,int salary) throws Exception{
 		Connection conn=Connect.obj();
 		Statement st=conn.createStatement();
@@ -186,14 +180,13 @@ class monthlySalaried{
 }
 class monthlyCommissionedSalary{
 	private static double commissionrate;
-	private int date,amountsale,salary,Id;
 	static{
 		commissionrate=5.5;
 	}
 	public void setMonthlySalesInfo(int Id,int salary) throws Exception{
 		Connection conn=Connect.obj();
 		Statement st=conn.createStatement();
-		String q="insert into monthlySales(Id,salary) values("+Id+","+salary+")";
+		String q="insert into monthlySales(Id,salary,commissionrate) values("+Id+","+salary+","+commissionrate+")";
 		st.executeUpdate(q);
 		conn.close();
 	}
@@ -214,7 +207,7 @@ class monthlyCommissionedSalary{
      	ResultSet rs = st.executeQuery(q1);
      	int rate = rs.getInt("commissionrate");
      	int salary=rs.getInt("salary");
-     	String q2="insert into monthlySales values ('"+id+","+salary+","+amountsale+","+rate+","+date+")";
+     	String q2="insert into monthlySales values ('"+id+","+salary+","+salesamount+","+rate+","+date+")";
      	st.executeUpdate(q2);
 		conn.close();
 	}
@@ -228,7 +221,6 @@ class monthlyCommissionedSalary{
 }
 public class Code{
 	public static void main(String[] args) throws Exception{
-		String  lastpaid = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 		Scanner in=new Scanner(System.in);
 		System.out.println("Press 1 to add new Employee");
 		int choice=in.nextInt();
@@ -262,7 +254,7 @@ public class Code{
 				}
 				System.out.println("Press 1 to add another new Employee or 0 to exit");
 				choice=in.nextInt();
-				E.insertRecord(Id,Name,Address,Umember,paymentRecieveMethod,paymentMethod,lastpaid,salary);
+				E.insertRecord(Id,Name,Address,Umember,paymentRecieveMethod,paymentMethod,salary);
 			}
 		}
 		System.out.println("Press 2 if you want to delete an employee");
