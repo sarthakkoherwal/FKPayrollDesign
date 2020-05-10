@@ -79,10 +79,10 @@ class Employee{
 		hourlySalary temp=new hourlySalary();
 		temp.insertTimeCard(id,hrs);
 	}
-	// public void receiptSales(){
-	// 	monthlyCommissionedSalary temp=new monthlyCommissionedSalary();
-	// 	temp.insertReceiptSales();
-	// }
+	public void receiptSales(int id,int salesamount) throws Exception{
+		monthlyCommissionedSalary temp=new monthlyCommissionedSalary();
+		temp.insertReceiptSales(id,salesamount);
+	}
 	// public void unionFees(){
 	// 	Union temp=new Union();
 	// 	temp.updateUnionFees();
@@ -178,11 +178,19 @@ class monthlyCommissionedSalary{
 		st.executeUpdate(q);
 		conn.close();
 	}
-	// public void insertReceiptSales(){
-	// 	//for loop which iterates over all values in table monthlyCommissionedSalary and for every person in the table inserts their sales amount and date
-	// 	System.out.println("Enter Date");
-	// 	System.out.println("Enter sales amount");
-	// }
+	public void insertReceiptSales(int id,int salesamount) throws Exception{
+		Connection conn=Connect.obj();
+		long millis=System.currentTimeMillis();  
+		java.sql.Date date=new java.sql.Date(millis);
+    	String q1="select commissionrate,salary from monthlySales where id= '"+id+"'";
+        Statement st= conn.createStatement();
+     	ResultSet rs = st.executeQuery(q1);
+     	int rate = rs.getInt("commissionrate");
+     	int salary=rs.getInt("salary");
+     	String q2="insert into monthlySales values ('"+id+","+salary+","+amountsale+","+rate+","+date+")";
+     	st.executeUpdate(q2);
+		conn.close();
+	}
 	public void deleteMember(int id) throws Exception{
 		//delete member from table monthlySales whose ID matches with id
 		Connection conn=Connect.obj();
@@ -264,8 +272,23 @@ public class Code{
 			System.out.println("Press 3 to enter timecard for another employee or 0 to exit");
 			choice=in.nextInt();
 		}
-		//fetch today's date and it if is sunday then update sales receipt for every employee in table monthlyCommissionedSalary
-		// e.receiptSales();
+		// fetch today's date and it if is sunday then update sales receipt for every employee in table monthlyCommissionedSalary		e.receiptSales();  
+		String  weekday = new SimpleDateFormat("E").format(Calendar.getInstance().getTime());
+		if(weekday.equals("Sun")){
+			System.out.println("Press 4 to post Sales receipt for employee");
+			choice=in.nextInt();
+			Employee E=new Employee();
+			while(choice==4){
+				int id,salesamount;
+				System.out.println("Enter Employee Id");
+				id=in.nextInt();
+				System.out.println("Enter Employee salesamount");
+				salesamount=in.nextInt();
+				E.receiptSales(id,salesamount);
+				System.out.println("Press 4 to post sales receipt for another employee or 0 to exit");
+				choice=in.nextInt();
+			}
+		}
 		//fetch today's fate and if it is sunday then update Union information for all employees who belong to the union
 		// e.unionFees();
 	}
