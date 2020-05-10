@@ -126,7 +126,7 @@ class monthlySalaried{
 	public void insertMonthlyInfo(int Id,int salary){
 		Connection conn=Connect.obj();
 		Statement st=conn.createStatement();
-		String q="insert into Hourly(Id,salary) values("+Id+","+salary+")";
+		String q="insert into monthly(Id,salary) values("+Id+","+salary+")";
 		st.executeUpdate(q);
 		conn.close();
 	}
@@ -143,7 +143,7 @@ class monthlyCommissionedSalary{
 	public void setMonthlySalesInfo(int Id,int salary){
 		Connection conn=Connect.obj();
 		Statement st=conn.createStatement();
-		String q="insert into Hourly(Id,salary,) values("+Id+","+salary+")";
+		String q="insert into monthlySales(Id,salary) values("+Id+","+salary+")";
 		st.executeUpdate(q);
 		conn.close();
 	}
