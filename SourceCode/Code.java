@@ -50,7 +50,7 @@ class Employee{
 		int Umember,paymentMethod;
 		Connection conn=Connect.obj();
 		Statement st=conn.createStatement();
-		String q1="select * from employee where id='"+ id+"'";
+		String q1="select * from employee where id="+ id;
 		ResultSet rs=st.executeQuery(q1);
 		Umember=rs.getInt("Umember");
 		paymentMethod=rs.getInt("paymentMethod");
@@ -71,7 +71,7 @@ class Employee{
 		temp.deleteMember(id);
 		}
 		//delete record from Employee table
-		String q2="delete from employee where Id='"+id+"'";
+		String q2="delete from employee where Id="+id;
 		st.executeUpdate(q2);
 		conn.close();
 	}
@@ -86,6 +86,14 @@ class Employee{
 	public void unionFees(int id,int serviceCharge) throws Exception{
 		Union temp=new Union();
 		temp.insertUnionFees(id,serviceCharge);
+	}
+	public void updateRate(int rate) throws Exception{
+		hourlySalary temp=new hourlySalary();
+		temp.updateRate(rate);
+	}
+	public void updateCommRate(int rate) throws Exception{
+		monthlyCommissionedSalary temp=new monthlyCommissionedSalary();
+		temp.updateCommRate(rate);
 	}
 }
 class Union{
@@ -102,7 +110,7 @@ class Union{
 		//delete member from table Union whose ID matches with id
 		Connection conn=Connect.obj();
 		Statement st=conn.createStatement();
-		String q="delete from Union where Id='"+id+"'";
+		String q="delete from Union where Id="+id;
 		st.executeUpdate(q);
 		conn.close();
 	}
@@ -134,7 +142,7 @@ class hourlySalary{
 		//delete member from table hourly whose ID matches with id
 		Connection conn=Connect.obj();
 		Statement st=conn.createStatement();
-		String q="delete from Hourly where Id='"+id+"'";
+		String q="delete from Hourly where Id="+id;
 		st.executeUpdate(q);
 		conn.close();
 	}
@@ -142,12 +150,19 @@ class hourlySalary{
 		Connection conn=Connect.obj();
 		long millis=System.currentTimeMillis();  
 		java.sql.Date date=new java.sql.Date(millis);
-    	String q1="select rate from hourly where id= '"+id+"'";
+    	String q1="select rate from hourly where id="+id;
         Statement st= conn.createStatement();
      	ResultSet rs = st.executeQuery(q1);
      	int rate = rs.getInt("rate");
      	String q2="insert into hourly values ('"+id+","+hrs+","+date+","+rate+")";
      	st.executeUpdate(q2);
+		conn.close();
+	}
+	public void updateRate(int rate) throws Exception{
+		Connection conn=Connect.obj();
+		String q="update hourly set rate="+rate;
+		Statement st= conn.createStatement();
+		st.executeUpdate(q);
 		conn.close();
 	}
 }
@@ -164,7 +179,7 @@ class monthlySalaried{
 		//delete member from table monthly whose ID matches with id
 		Connection conn=Connect.obj();
 		Statement st=conn.createStatement();
-		String q="delete from monthly where Id='"+id+"'";
+		String q="delete from monthly where Id="+id;
 		st.executeUpdate(q);
 		conn.close();
 	}
@@ -186,7 +201,7 @@ class monthlyCommissionedSalary{
 		//delete member from table monthlySales whose ID matches with id
 		Connection conn=Connect.obj();
 		Statement st=conn.createStatement();
-		String q="delete from monthlySales where Id='"+id+"'";
+		String q="delete from monthlySales where Id="+id;
 		st.executeUpdate(q);
 		conn.close();
 	}
@@ -194,13 +209,20 @@ class monthlyCommissionedSalary{
 		Connection conn=Connect.obj();
 		long millis=System.currentTimeMillis();  
 		java.sql.Date date=new java.sql.Date(millis);
-    	String q1="select commissionrate,salary from monthlySales where id= '"+id+"'";
+    	String q1="select commissionrate,salary from monthlySales where id="+id;
         Statement st= conn.createStatement();
      	ResultSet rs = st.executeQuery(q1);
      	int rate = rs.getInt("commissionrate");
      	int salary=rs.getInt("salary");
      	String q2="insert into monthlySales values ('"+id+","+salary+","+amountsale+","+rate+","+date+")";
      	st.executeUpdate(q2);
+		conn.close();
+	}
+	public void updateCommRate(int rate) throws Exception{
+		Connection conn=Connect.obj();
+		String q="update monthlySales set commissionrate="+rate;
+		Statement st= conn.createStatement();
+		st.executeUpdate(q);
 		conn.close();
 	}
 }
@@ -229,9 +251,6 @@ public class Code{
 				System.out.println("Press 1 if the employee is a member of Employee Union ans 0 if he is not a member");
 				Umember=in.nextInt();
 				Id=E.getId();
-				// if(Umember==1){
-				// 	E.setUnionInfo(Id);
-				// }
 				System.out.println("Enter the payment method for Employee");
 				System.out.println("Press 1 for hourly payment");
 				System.out.println("Press 2 for monthly payment");
@@ -240,13 +259,7 @@ public class Code{
 				if(paymentMethod==2 || paymentMethod==3){
 					System.out.println("Enter monthly salary");
 					salary=in.nextInt();
-					// E.setMonthlyInfo(Id,salary);
 				}
-				// else if(paymentMethod==3){
-				// 	System.out.println("Enter monthly Salary");
-				// 	salary=in.nextInt();
-				// 	// E.setMonthySalesInfo(Id,salary);
-				// }
 				System.out.println("Press 1 to add another new Employee or 0 to exit");
 				choice=in.nextInt();
 				E.insertRecord(Id,Name,Address,Umember,paymentRecieveMethod,paymentMethod,lastpaid,salary);
@@ -305,7 +318,25 @@ public class Code{
 				choice=in.nextInt();
 			}			
 		}
-		//fetch today's fate and if it is sunday then update Union information for all employees who belong to the union
-		// e.unionFees();
+		System.out.println("Press 6 if you want to update Employee Info");
+		choice=in.nextInt();
+		if(choice==6){
+			System.out.println("Press 1 if you want to change rate for hourly employees");
+			System.out.println("Press 2 if you want to change commission rate for monthlycommissioned employees");
+			int changechoice;
+			changechoice=in.nextInt();
+			Employee E=new Employee();
+			int rate;
+			if(changechoice==1){
+				System.out.println("Enter new rate");
+				rate=in.nextInt();
+				E.updateRate(rate);
+			}
+			else{
+				System.out.println("Enter new commission rate");
+				rate=in.nextInt();
+				E.updateCommRate(rate);
+			}
+		}
 	}
 }
