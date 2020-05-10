@@ -83,10 +83,10 @@ class Employee{
 		monthlyCommissionedSalary temp=new monthlyCommissionedSalary();
 		temp.insertReceiptSales(id,salesamount);
 	}
-	// public void unionFees(){
-	// 	Union temp=new Union();
-	// 	temp.updateUnionFees();
-	// }
+	public void unionFees(int id,int serviceCharge) throws Exception{
+		Union temp=new Union();
+		temp.insertUnionFees(id,serviceCharge);
+	}
 }
 class Union{
 	private int serviceCharge,Id;
@@ -98,18 +98,22 @@ class Union{
 		st.executeUpdate(q);
 		conn.close();
 	}
-	// public void updateUnionFees(){
-	// 	//for loop which iterates over all values in table Union and for every person in the table updates their membershipFees and serviceCharge
-	// 	System.out.println("Enter membership fees");
-
-	// 	System.out.println("Enter service charges");
-	// }
 	public void deleteMember(int id) throws Exception{
 		//delete member from table Union whose ID matches with id
 		Connection conn=Connect.obj();
 		Statement st=conn.createStatement();
 		String q="delete from Union where Id='"+id+"'";
 		st.executeUpdate(q);
+		conn.close();
+	}
+	public void insertUnionFees(int id,int serviceCharge) throws Exception{
+		//for loop which iterates over all values in table Union and for every person in the table updates their membershipFees and serviceCharge
+		Connection conn=Connect.obj();
+		long millis=System.currentTimeMillis();  
+		java.sql.Date date=new java.sql.Date(millis);
+		Statement st=conn.createStatement();
+     	String q="insert into Union values ('"+id+","+serviceCharge+","+date+")";
+     	st.executeUpdate(q);
 		conn.close();
 	}
 }
@@ -178,6 +182,14 @@ class monthlyCommissionedSalary{
 		st.executeUpdate(q);
 		conn.close();
 	}
+	public void deleteMember(int id) throws Exception{
+		//delete member from table monthlySales whose ID matches with id
+		Connection conn=Connect.obj();
+		Statement st=conn.createStatement();
+		String q="delete from monthlySales where Id='"+id+"'";
+		st.executeUpdate(q);
+		conn.close();
+	}
 	public void insertReceiptSales(int id,int salesamount) throws Exception{
 		Connection conn=Connect.obj();
 		long millis=System.currentTimeMillis();  
@@ -189,14 +201,6 @@ class monthlyCommissionedSalary{
      	int salary=rs.getInt("salary");
      	String q2="insert into monthlySales values ('"+id+","+salary+","+amountsale+","+rate+","+date+")";
      	st.executeUpdate(q2);
-		conn.close();
-	}
-	public void deleteMember(int id) throws Exception{
-		//delete member from table monthlySales whose ID matches with id
-		Connection conn=Connect.obj();
-		Statement st=conn.createStatement();
-		String q="delete from monthlySales where Id='"+id+"'";
-		st.executeUpdate(q);
 		conn.close();
 	}
 }
@@ -288,6 +292,18 @@ public class Code{
 				System.out.println("Press 4 to post sales receipt for another employee or 0 to exit");
 				choice=in.nextInt();
 			}
+			System.out.println("Press 5 to post Union Info for employee");
+			choice=in.nextInt();
+			while(choice==5){
+				int id,serviceCharge;
+				System.out.println("Enter Employee Id");
+				id=in.nextInt();
+				System.out.println("Enter Employee serviceCharge");
+				serviceCharge=in.nextInt();
+				E.unionFees(id,serviceCharge);
+				System.out.println("Press 5 to post Union Info for another employee or 0 to exit");
+				choice=in.nextInt();
+			}			
 		}
 		//fetch today's fate and if it is sunday then update Union information for all employees who belong to the union
 		// e.unionFees();
