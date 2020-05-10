@@ -20,7 +20,23 @@ class Employee{
 	Employee(){
 		count++;
 	}
-	public void insertRecord(int Id,String Name,String Address,int Umember,int paymentRecieveMethod,int paymentMethod,String lastpaid) throws Exception{
+	public void insertRecord(int Id,String Name,String Address,int Umember,int paymentRecieveMethod,int paymentMethod,String lastpaid,int salary) throws Exception{
+		if(Umember==1){
+			Union u=new Union();
+			u.insertUnionInfo(Id);	
+		}
+		if(paymentMethod==1){
+			hourlySalary h=new hourlySalary();
+			h.insertHourlyInfo(Id);
+		}
+		else if(paymentMethod==2){
+			monthlySalaried m=new monthlySalaried();
+			m.insertMonthlyInfo(Id,salary);
+		}
+		else{
+			monthlyCommissionedSalary ms=new monthlyCommissionedSalary();
+			ms.setMonthlySalesInfo(Id,salary);
+		}
 		Connection conn=Connect.obj();
 		Statement st=conn.createStatement();
 		String q="insert into employee values("+Id+","+Name+","+Address+","+Umember+","+paymentRecieveMethod+","+paymentMethod+lastpaid+")";
@@ -29,22 +45,6 @@ class Employee{
 	}
 	public int getId(){
 		return count;
-	}
-	public void setUnionInfo(int Id) throws Exception{
-		Union u=new Union();
-		u.insertUnionInfo(Id);
-	}
-	public void setHourlyInfo(int Id) throws Exception{
-		hourlySalary h=new hourlySalary();
-		h.insertHourlyInfo(Id);
-	}
-	public void setMonthlyInfo(int Id,int salary) throws Exception{
-		monthlySalaried m=new monthlySalaried();
-		m.insertMonthlyInfo(Id,salary);
-	}
-	public void setMonthySalesInfo(int Id,int salary) throws Exception{
-		monthlyCommissionedSalary ms=new monthlyCommissionedSalary();
-		ms.setMonthlySalesInfo(Id,salary);
 	}
 	// public void timeCard(){
 	// 	hourlySalary temp=new hourlySalary();
@@ -194,7 +194,7 @@ public class Code{
 		if(choice==1){
 			String Name,Address;
 			int Id,paymentRecieveMethod;
-			int Umember;
+			int Umember,salary=01;
 			Employee E=new Employee();
 			while(choice==1){
 				in.nextLine();
@@ -210,32 +210,27 @@ public class Code{
 				System.out.println("Press 1 if the employee is a member of Employee Union ans 0 if he is not a member");
 				Umember=in.nextInt();
 				Id=E.getId();
-				if(Umember==1){
-					E.setUnionInfo(Id);
-				}
+				// if(Umember==1){
+				// 	E.setUnionInfo(Id);
+				// }
 				System.out.println("Enter the payment method for Employee");
 				System.out.println("Press 1 for hourly payment");
 				System.out.println("Press 2 for monthly payment");
 				System.out.println("Press 3 for monthly payment with sales incentive");
 				int paymentMethod=in.nextInt();
-				if(paymentMethod==1){
-					E.setHourlyInfo(Id);
-				}
-				else if(paymentMethod==2){
-					int salary;
+				if(paymentMethod==2 || paymentMethod==3){
 					System.out.println("Enter monthly salary");
 					salary=in.nextInt();
-					E.setMonthlyInfo(Id,salary);
+					// E.setMonthlyInfo(Id,salary);
 				}
-				else if(paymentMethod==3){
-					int salary;
-					System.out.println("Enter monthly Salary");
-					salary=in.nextInt();
-					E.setMonthySalesInfo(Id,salary);
-				}
+				// else if(paymentMethod==3){
+				// 	System.out.println("Enter monthly Salary");
+				// 	salary=in.nextInt();
+				// 	// E.setMonthySalesInfo(Id,salary);
+				// }
 				System.out.println("Press 1 to add another new Employee or 0 to exit");
 				choice=in.nextInt();
-				E.insertRecord(Id,Name,Address,Umember,paymentRecieveMethod,paymentMethod,lastpaid);
+				E.insertRecord(Id,Name,Address,Umember,paymentRecieveMethod,paymentMethod,lastpaid,salary);
 			}
 		}
 		System.out.println("Press 1 if you want to delete an employee");
